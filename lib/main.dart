@@ -54,6 +54,7 @@ import 'Widget/systemChromeSettings.dart';
 // }
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isIOS) {
     if (Firebase.apps.isNotEmpty) {
@@ -64,6 +65,8 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
+
+
   FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true, // Required to display a heads up notification
     badge: true,

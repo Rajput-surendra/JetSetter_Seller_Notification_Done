@@ -1,6 +1,9 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../Helper/ApiBaseHelper.dart';
+import '../Helper/PushNotificationService.dart';
 import '../Screen/Authentication/Login.dart';
 import '../Screen/DeshBord/dashboard.dart';
 import '../Widget/api.dart';
@@ -44,6 +47,32 @@ class LoginProvider extends ChangeNotifier {
             mobile!,
           );
           setPrefrenceBool(isLogin, true);
+              FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+              FlutterLocalNotificationsPlugin();
+          FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+          FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+            RemoteNotification? notification = message.notification;
+            AndroidNotification? android = message.notification?.android;
+
+            if (notification != null && android != null) {
+              FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+              FlutterLocalNotificationsPlugin();
+
+              var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+                  'your_channel_id', 'your_channel_name',
+                  channelDescription: 'your_channel_description',
+                  sound:  RawResourceAndroidNotificationSound('test'),
+                  importance: Importance.max,
+                  priority: Priority.high);
+
+              var platformChannelSpecifics =
+              NotificationDetails(android: androidPlatformChannelSpecifics);
+
+              flutterLocalNotificationsPlugin.show(
+                  0, notification.title, notification.body, platformChannelSpecifics);
+            }
+          });
           Navigator.pushReplacement(
             context,
             CupertinoPageRoute(
